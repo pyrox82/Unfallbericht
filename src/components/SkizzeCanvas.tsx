@@ -2,13 +2,15 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Section } from "./FormField";
+import { t, type Sprache } from "@/lib/i18n";
 
 interface Props {
+  lang: Sprache;
   value: string;
   onChange: (dataUrl: string) => void;
 }
 
-export function SkizzeCanvas({ value, onChange }: Props) {
+export function SkizzeCanvas({ lang, value, onChange }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("#1e40af");
@@ -100,7 +102,7 @@ export function SkizzeCanvas({ value, onChange }: Props) {
   };
 
   return (
-    <Section title="Skizze des Unfalls (optional)">
+    <Section title={t("sectionSkizze", lang)}>
       <div className="flex flex-wrap gap-2 mb-3 items-center">
         <button
           onClick={() => setTool("pen")}
@@ -108,7 +110,7 @@ export function SkizzeCanvas({ value, onChange }: Props) {
             tool === "pen" ? "bg-blue-700 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
-          Stift
+          {t("btnStift", lang)}
         </button>
         <button
           onClick={() => setTool("eraser")}
@@ -116,13 +118,13 @@ export function SkizzeCanvas({ value, onChange }: Props) {
             tool === "eraser" ? "bg-blue-700 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
         >
-          Radierer
+          {t("btnRadierer", lang)}
         </button>
         <input
           type="color"
           value={color}
           onChange={(e) => setColor(e.target.value)}
-          title="Farbe wählen"
+          title={t("titleFarbe", lang)}
           className="w-8 h-8 rounded cursor-pointer border border-gray-300"
         />
         <select
@@ -130,16 +132,16 @@ export function SkizzeCanvas({ value, onChange }: Props) {
           onChange={(e) => setLineWidth(Number(e.target.value))}
           className="border border-gray-300 rounded px-2 py-1 text-sm"
         >
-          <option value={1}>Dünn</option>
-          <option value={2}>Normal</option>
-          <option value={4}>Dick</option>
-          <option value={8}>Sehr dick</option>
+          <option value={1}>{t("strichDuenn", lang)}</option>
+          <option value={2}>{t("strichNormal", lang)}</option>
+          <option value={4}>{t("strichDick", lang)}</option>
+          <option value={8}>{t("strichSehrDick", lang)}</option>
         </select>
         <button
           onClick={clear}
           className="px-3 py-1.5 rounded text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors ml-auto"
         >
-          Alles löschen
+          {t("btnAllesLoeschen", lang)}
         </button>
       </div>
       <canvas
@@ -157,7 +159,7 @@ export function SkizzeCanvas({ value, onChange }: Props) {
         onTouchEnd={stopDraw}
       />
       <p className="text-xs text-gray-400 mt-1">
-        Zeichnen Sie eine Skizze der Unfallsituation. Die Skizze wird in das PDF aufgenommen.
+        {t("hintSkizze", lang)}
       </p>
     </Section>
   );

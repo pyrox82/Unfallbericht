@@ -1,25 +1,28 @@
 import jsPDF from "jspdf";
 import type { UnfallBericht, ManoverCheckboxen } from "./types";
+import { t, type Sprache } from "./i18n";
 
-const manoverLabels: Record<keyof Omit<ManoverCheckboxen, "anderesManover">, string> = {
-  geparkt: "Stand geparkt",
-  parkenVerlassen: "Verließ Parkplatz / öffnete Tür",
-  einparken: "Wollte einparken",
-  ausGarageAusfahren: "Fuhr aus Garage / Privatgelände",
-  aufParkplatz: "Fuhr auf Parkplatz",
-  kreisverkehr: "Im Kreisverkehr",
-  abbiegenLinks: "Bog links ab",
-  abbiegenRechts: "Bog rechts ab",
-  ueberholenVorbeifahren: "Überholte / fuhr vorbei",
-  spurwechselLinks: "Wechselte Spur nach links",
-  spurwechselRechts: "Wechselte Spur nach rechts",
-  rechtsHintenAufgefahren: "Fuhr von hinten auf",
-  gleicheRichtungVerschiedeneSpuren: "Gleiche Richtung, andere Spur",
-  gegenfahrbahn: "Fuhr auf Gegenfahrbahn",
-  rechtsVonRechts: "Kam von rechts (Vorfahrt)",
-  rueckwaerts: "Fuhr rückwärts",
-  nichtBeachtenVorfahrt: "Missachtete Vorfahrt / Ampel",
+const manoverKeyMap: Record<keyof Omit<ManoverCheckboxen, "anderesManover">, string> = {
+  geparkt: "manoverGeparkt",
+  parkenVerlassen: "manoverParkenVerlassen",
+  einparken: "manoverEinparken",
+  ausGarageAusfahren: "manoverAusGarage",
+  aufParkplatz: "manoverAufParkplatz",
+  kreisverkehr: "manoverKreisverkehr",
+  abbiegenLinks: "manoverAbbiegenLinks",
+  abbiegenRechts: "manoverAbbiegenRechts",
+  ueberholenVorbeifahren: "manoverUeberholen",
+  spurwechselLinks: "manoverSpurwechselLinks",
+  spurwechselRechts: "manoverSpurwechselRechts",
+  rechtsHintenAufgefahren: "manoverHintenAufgefahren",
+  gleicheRichtungVerschiedeneSpuren: "manoverGleicheRichtung",
+  gegenfahrbahn: "manoverGegenfahrbahn",
+  rechtsVonRechts: "manoverRechtsVonRechts",
+  rueckwaerts: "manoverRueckwaerts",
+  nichtBeachtenVorfahrt: "manoverVorfahrt",
 };
+
+const manoverKeys = Object.keys(manoverKeyMap) as (keyof typeof manoverKeyMap)[];
 
 function addSectionTitle(doc: jsPDF, title: string, y: number, pageWidth: number): number {
   doc.setFillColor(30, 64, 175);
@@ -143,7 +146,7 @@ function checkNewPage(doc: jsPDF, y: number, pageHeight: number, margin = 80): n
   return y;
 }
 
-export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<void> {
+export async function generateUnfallberichtPdf(bericht: UnfallBericht, lang: Sprache): Promise<void> {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -156,7 +159,7 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(15);
   doc.setFont("helvetica", "bold");
-  doc.text("Europäischer Unfallbericht", pageWidth / 2, 10, { align: "center" });
+  doc.text(t("appTitle", lang), pageWidth / 2, 10, { align: "center" });
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   doc.text("Constat Amiable d'Accident Automobile", pageWidth / 2, 17, { align: "center" });
@@ -164,14 +167,14 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   y = 28;
 
    // ── 1. Unfalldaten ──────────────────────────────────────────────────────────
-   y = addSectionTitle(doc, "1. Unfalldaten", y, pageWidth);
+   y = addSectionTitle(doc, t("pdfSectionUnfall", lang), y, pageWidth);
    y = twoColumns(
      doc,
      [
-       ["Datum", bericht.unfallDatum],
-       ["Uhrzeit", bericht.unfallUhrzeit],
-       ["Unfallort", bericht.unfallOrt],
-       ["Land", bericht.unfallLand],
+       [t("pdfDatum", lang), bericht.unfallDatum],
+       [t("pdfUhrzeit", lang), bericht.unfallUhrzeit],
+       [t("pdfUnfallort", lang), bericht.unfallOrt],
+       [t("pdfLand", lang), bericht.unfallLand],
      ],
      y,
      pageWidth,
@@ -180,9 +183,9 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
    y = checkNewPage(doc, y, pageHeight);
 
    const checks = [
-     bericht.verletzte ? "Verletzte: Ja" : "Verletzte: Nein",
-     bericht.sachschadenAnDritten ? "Sachschaden an Dritten: Ja" : "Sachschaden an Dritten: Nein",
-     bericht.zeugenVorhanden ? "Zeugen vorhanden: Ja" : "Zeugen vorhanden: Nein",
+     bericht.verletzte ? t("pdfVerletzteJa", lang) : t("pdfVerletzteNein", lang),
+     bericht.sachschadenAnDritten ? t("pdfSachschadenJa", lang) : t("pdfSachschadenNein", lang),
+     bericht.zeugenVorhanden ? t("pdfZeugenJa", lang) : t("pdfZeugenNein", lang),
    ];
    doc.setFontSize(8);
    doc.setFont("helvetica", "normal");
@@ -200,16 +203,16 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     bericht.zeuge2Name
   ) {
     y = checkNewPage(doc, y, pageHeight);
-    y = addSectionTitle(doc, "2. Zeugen", y, pageWidth);
+    y = addSectionTitle(doc, t("pdfSectionZeugen", lang), y, pageWidth);
     y = twoColumns(
       doc,
       [
-        ["Name Zeuge 1", bericht.zeuge1Name],
-        ["Name Zeuge 2", bericht.zeuge2Name],
-        ["Adresse Zeuge 1", bericht.zeuge1Adresse],
-        ["Adresse Zeuge 2", bericht.zeuge2Adresse],
-        ["Telefon Zeuge 1", bericht.zeuge1Telefon],
-        ["Telefon Zeuge 2", bericht.zeuge2Telefon],
+        [t("pdfNameZeuge1", lang), bericht.zeuge1Name],
+        [t("pdfNameZeuge2", lang), bericht.zeuge2Name],
+        [t("pdfAdresseZeuge1", lang), bericht.zeuge1Adresse],
+        [t("pdfAdresseZeuge2", lang), bericht.zeuge2Adresse],
+        [t("pdfTelefonZeuge1", lang), bericht.zeuge1Telefon],
+        [t("pdfTelefonZeuge2", lang), bericht.zeuge2Telefon],
       ],
       y,
       pageWidth,
@@ -225,30 +228,30 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
 
   for (const [label, fz, vs, mv, schaden, bemerkung] of fahrzeuge) {
     y = checkNewPage(doc, y, pageHeight);
-    y = addSectionTitle(doc, `3${label === "B" ? "b" : "a"}. Fahrzeug ${label} – Fahrer & Fahrzeug`, y, pageWidth);
+    y = addSectionTitle(doc, t(label === "A" ? "pdfSectionFahrzeugA" : "pdfSectionFahrzeugB", lang), y, pageWidth);
 
     y = twoColumns(
       doc,
       [
-        ["Kennzeichen", fz.kennzeichen],
-        ["Marke / Modell", fz.markeModell],
-        ["Baujahr", fz.baujahr],
-        ["Fahrgestellnummer", fz.fahrgestellnummer],
-        ["Name (Fahrer)", fz.fahrerName],
-        ["Vorname (Fahrer)", fz.fahrerVorname],
-        ["Geburtsdatum", fz.fahrerGeburtsdatum],
-        ["Adresse", fz.fahrerAdresse],
-        ["PLZ / Ort", fz.fahrerPLZOrt],
-        ["Land", fz.fahrerLand],
-        ["Telefon", fz.fahrerTelefon],
-        ["Führerscheinnummer", fz.fahrerFuehrerscheinnummer],
-        ["Führerscheinklasse", fz.fahrerFuehrerscheinklasse],
-        ["Ausstelldatum Führerschein", fz.fahrerFuehrerscheinAusstelldatum],
-        ["Eigentümer Name", fz.eigentuemerName],
-        ["Eigentümer Adresse", fz.eigentuemerAdresse],
-        ["Eigentümer PLZ / Ort", fz.eigentuemerPLZOrt],
-        ["Eigentümer Land", fz.eigentuemerLand],
-        ["Eigentümer Telefon", fz.eigentuemerTelefon],
+        [t("labelKennzeichen", lang), fz.kennzeichen],
+        [t("labelMarkeModell", lang), fz.markeModell],
+        [t("labelBaujahr", lang), fz.baujahr],
+        [t("labelFahrgestellnummer", lang), fz.fahrgestellnummer],
+        [t("labelName", lang) + " (" + t("fahrer", lang) + ")", fz.fahrerName],
+        [t("labelVorname", lang) + " (" + t("fahrer", lang) + ")", fz.fahrerVorname],
+        [t("labelGeburtsdatum", lang), fz.fahrerGeburtsdatum],
+        [t("labelAdresse", lang), fz.fahrerAdresse],
+        [t("labelPLZOrt", lang), fz.fahrerPLZOrt],
+        [t("labelLand", lang), fz.fahrerLand],
+        [t("labelTelefon", lang), fz.fahrerTelefon],
+        [t("labelFuehrerscheinnummer", lang), fz.fahrerFuehrerscheinnummer],
+        [t("labelFuehrerscheinklasse", lang), fz.fahrerFuehrerscheinklasse],
+        [t("labelAusstelldatum", lang), fz.fahrerFuehrerscheinAusstelldatum],
+        [t("labelEigentuemerName", lang), fz.eigentuemerName],
+        [t("labelEigentuemerAdresse", lang), fz.eigentuemerAdresse],
+        [t("labelEigentuemerPLZOrt", lang), fz.eigentuemerPLZOrt],
+        [t("labelEigentuemerLand", lang), fz.eigentuemerLand],
+        [t("labelEigentuemerTelefon", lang), fz.eigentuemerTelefon],
       ],
       y,
       pageWidth,
@@ -256,19 +259,19 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     );
 
     y = checkNewPage(doc, y, pageHeight);
-    y = addSectionTitle(doc, `Versicherung Fahrzeug ${label}`, y, pageWidth);
+    y = addSectionTitle(doc, t(label === "A" ? "pdfSectionVersicherungA" : "pdfSectionVersicherungB", lang), y, pageWidth);
     y = twoColumns(
       doc,
       [
-        ["Versicherungsgesellschaft", vs.gesellschaftName],
-        ["Adresse", vs.gesellschaftAdresse],
-        ["Telefon", vs.gesellschaftTelefon],
-        ["Versicherungsscheinnummer", vs.versicherungsscheinnummer],
-        ["Grüne Karte Nummer", vs.grueneKarteNummer],
-        ["Grüne Karte gültig bis", vs.grueneKarteGueltigBis],
-        ["Kaskoversicherung", vs.kaskoversicherung ? "Ja" : "Nein"],
-        ["Kasko-Gesellschaft", vs.kaskoGesellschaft],
-        ["Kasko-Scheinnummer", vs.kaskoScheinnummer],
+        [t("labelVersicherungsgesellschaft", lang), vs.gesellschaftName],
+        [t("labelGesellschaftAdresse", lang), vs.gesellschaftAdresse],
+        [t("labelGesellschaftTelefon", lang), vs.gesellschaftTelefon],
+        [t("labelVersicherungsscheinnummer", lang), vs.versicherungsscheinnummer],
+        [t("labelGrueneKarteNummer", lang), vs.grueneKarteNummer],
+        [t("labelGrueneKarteGueltig", lang), vs.grueneKarteGueltigBis],
+        [t("pdfKaskoJa", lang), vs.kaskoversicherung ? "Ja" : "Nein"],
+        [t("labelKaskoGesellschaft", lang), vs.kaskoGesellschaft],
+        [t("labelKaskoScheinnummer", lang), vs.kaskoScheinnummer],
       ],
       y,
       pageWidth,
@@ -276,12 +279,12 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     );
 
     y = checkNewPage(doc, y, pageHeight);
-    y = addSectionTitle(doc, `Manöver / Umstände Fahrzeug ${label}`, y, pageWidth);
+    y = addSectionTitle(doc, t(label === "A" ? "pdfSectionManoverA" : "pdfSectionManoverB", lang), y, pageWidth);
     doc.setFontSize(8);
     let mvY = y;
     let col = 0;
     const colW2 = (pageWidth - 28) / 2;
-    (Object.keys(manoverLabels) as (keyof typeof manoverLabels)[]).forEach((key) => {
+    manoverKeys.forEach((key) => {
       if (mv[key]) {
         const xPos = 14 + col * (colW2 + 2);
         mvY = checkNewPage(doc, mvY, pageHeight);
@@ -289,7 +292,7 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
         doc.setTextColor(30, 64, 175);
         doc.text("✓", xPos, mvY);
         doc.setTextColor(0, 0, 0);
-        const labelWrapped = doc.splitTextToSize(manoverLabels[key], colW2 - 7);
+        const labelWrapped = doc.splitTextToSize(t(manoverKeyMap[key], lang), colW2 - 7);
         doc.text(labelWrapped, xPos + 5, mvY);
         const rowH = Math.max(labelWrapped.length * 4.5, 5);
         col++;
@@ -305,21 +308,21 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
       mvY = checkNewPage(doc, mvY, pageHeight);
       doc.setFontSize(8);
       doc.setTextColor(0, 0, 0);
-      const sonstigesLines = doc.splitTextToSize(`Sonstiges: ${mv.anderesManover}`, pageWidth - 28);
+      const sonstigesLines = doc.splitTextToSize(`${t("pdfSonstiges", lang)}: ${mv.anderesManover}`, pageWidth - 28);
       doc.text(sonstigesLines, 14, mvY);
       mvY += sonstigesLines.length * 4.5 + 2;
     }
     y = mvY + 2;
 
     y = checkNewPage(doc, y, pageHeight);
-    y = addField(doc, `Sichtbare Schäden Fahrzeug ${label}`, schaden, 14, y, pageWidth - 28, pageHeight);
-    y = addField(doc, `Bemerkungen Fahrzeug ${label}`, bemerkung, 14, y, pageWidth - 28, pageHeight);
+    y = addField(doc, t(label === "A" ? "labelSchadenA" : "labelSchadenB", lang), schaden, 14, y, pageWidth - 28, pageHeight);
+    y = addField(doc, t(label === "A" ? "labelBemerkungA" : "labelBemerkungB", lang), bemerkung, 14, y, pageWidth - 28, pageHeight);
   }
 
   // ── Skizze ──────────────────────────────────────────────────────────────────
   if (bericht.skizze) {
     y = checkNewPage(doc, y + 4, pageHeight, 80);
-    y = addSectionTitle(doc, "4. Skizze des Unfalls", y, pageWidth);
+    y = addSectionTitle(doc, t("pdfSectionSkizze", lang), y, pageWidth);
     const skizzeW = pageWidth - 28;
     const skizzeH = 80;
     try {
@@ -334,7 +337,7 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     if (bericht.bilder.length > 0) {
       doc.addPage();
       y = 14;
-      y = addSectionTitle(doc, "5. Fotos", y, pageWidth);
+      y = addSectionTitle(doc, t("pdfSectionFotos", lang), y, pageWidth);
 
       const maxW = (pageWidth - 32) / 2; // max width for image in a column
       const maxH = 80; // max height for image
@@ -359,12 +362,12 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
 
           const typeLabel =
             bild.type === "fahrzeugA"
-              ? "Fahrzeug A"
+              ? t("fotoTypFahrzeugA", lang)
               : bild.type === "fahrzeugB"
-              ? "Fahrzeug B"
+              ? t("fotoTypFahrzeugB", lang)
               : bild.type === "unfall"
-              ? "Unfall"
-              : "Sonstiges";
+              ? t("fotoTypUnfall", lang)
+              : t("fotoTypSonstiges", lang);
           const caption = `${typeLabel}${bild.beschreibung ? `: ${bild.beschreibung}` : ""}`;
           const captionLines = doc.splitTextToSize(caption, displayWidth);
           const captionHeight = Math.max(captionLines.length * 3.5, 3.5);
@@ -402,11 +405,11 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   // ── Unterschriften ────────────────────────────────────────────────────────────
   doc.addPage();
   y = 20;
-  y = addSectionTitle(doc, "6. Unterschriften", y, pageWidth);
+  y = addSectionTitle(doc, t("pdfSectionUnterschriften", lang), y, pageWidth);
   y += 6;
   doc.setFontSize(8);
-  doc.text("Fahrzeug A – Unterschrift des Fahrers:", 14, y);
-  doc.text("Fahrzeug B – Unterschrift des Fahrers:", pageWidth / 2 + 4, y);
+  doc.text(t("pdfLabelUnterschriftA", lang), 14, y);
+  doc.text(t("pdfLabelUnterschriftB", lang), pageWidth / 2 + 4, y);
   y += 4;
   doc.setDrawColor(100, 100, 100);
   const sigW = (pageWidth - 32) / 2;
@@ -433,13 +436,13 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
   doc.text(
-    "Durch Unterzeichnung bestätigen beide Fahrer die Richtigkeit der obigen Angaben.",
+    t("pdfUnterschriftText1", lang),
     pageWidth / 2,
     y,
     { align: "center" }
   );
   doc.text(
-    "Dieser Bericht stellt kein Schuldanerkenntnis dar.",
+    t("pdfUnterschriftText2", lang),
     pageWidth / 2,
     y + 4,
     { align: "center" }
@@ -452,7 +455,7 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     doc.setFontSize(7);
     doc.setTextColor(150, 150, 150);
     doc.text(
-      `Europäischer Unfallbericht – Seite ${i} von ${totalPages}`,
+      t("pdfFooter", lang, { i: String(i), totalPages: String(totalPages) }),
       pageWidth / 2,
       pageHeight - 15,
       { align: "center" }

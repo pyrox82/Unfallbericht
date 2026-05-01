@@ -70,6 +70,7 @@ export interface ManoverCheckboxen {
 }
 
 export interface UnfallBericht {
+  sprache: "de" | "de-en" | "de-fr";
   // Unfall Allgemein
   unfallDatum: string;
   unfallUhrzeit: string;
@@ -178,6 +179,7 @@ export const defaultVersicherung = (): VersicherungDaten => ({
 });
 
 export const defaultBericht = (): UnfallBericht => ({
+  sprache: "de",
   unfallDatum: "",
   unfallUhrzeit: "",
   unfallOrt: "",

@@ -4,7 +4,7 @@
 
 **App Status**: ✅ Europäischer Unfallbericht (European Accident Report) app fully implemented
 
-A complete multi-tab accident report form app in German. Users can fill in all accident details and generate a downloadable PDF.
+A complete multi-tab accident report form app with optional bilingual support. Users can fill in all accident details and generate a downloadable PDF in German only, German/English, or German/French.
 
 ## Recently Completed
 
@@ -26,6 +26,7 @@ A complete multi-tab accident report form app in German. Users can fill in all a
   - [x] PDF image fix: preserve aspect ratio for photos, no longer forcing 4:3 format; now scales images to fit while maintaining original proportions
   - [x] PDF two-column overflow fix: `twoColumns` processes field pairs together, calculates required height before drawing, and performs a single synchronized page-break when needed, preventing both footer overlap and empty pages
   - [x] Save/load JSON: users can save all form data + sketch + photos + signatures to a local `.json` file and reload it later via header buttons
+  - [x] Bilingual form support: language selector in header with three options — German only (default), German/English, German/French. All UI labels, section titles, placeholders, and PDF output are translated accordingly via centralized i18n system (`src/lib/i18n.ts`)
 
 ## Current Structure
 
@@ -41,6 +42,7 @@ A complete multi-tab accident report form app in German. Users can fill in all a
 | `src/components/BilderUpload.tsx` | Photo upload with drag & drop | ✅ Done |
 | `src/components/SignatureCanvas.tsx` | Signature pads for Fahrzeug A & B | ✅ Done |
 | `src/lib/types.ts` | TypeScript interfaces & defaults | ✅ Done |
+| `src/lib/i18n.ts` | Translation dictionary and `t()` helper for DE / DE+EN / DE+FR | ✅ Done |
 | `src/lib/generatePdf.ts` | jspdf-based PDF generation | ✅ Done |
 
 ## Current Focus
@@ -106,3 +108,4 @@ export async function GET() {
 | 2026-05-01 | PDF empty page fix: refactored `twoColumns` to calculate field heights before drawing and perform a single synchronized page-break per pair, preventing duplicate `addPage()` calls that caused blank pages |
 | 2026-05-01 | Added signature tab: dual canvas signature pads for Fahrzeug A & B with pointer event support (stylus, finger, mouse), signatures embedded in PDF |
 | 2026-05-01 | Added save/load JSON feature: header buttons to export/import all form data (including sketch, photos, signatures) as local `.json` file |
+| 2026-05-01 | Added bilingual form support: language selector (Deutsch / Deutsch+English / Deutsch+Français), all UI labels and PDF output now support trilingual i18n via `src/lib/i18n.ts` |

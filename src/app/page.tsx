@@ -10,17 +10,22 @@ import { ManoverForm } from "@/components/ManoverForm";
 import { BilderUpload } from "@/components/BilderUpload";
 import { SkizzeCanvas } from "@/components/SkizzeCanvas";
 import { SignatureCanvas } from "@/components/SignatureCanvas";
+import { t, type Sprache } from "@/lib/i18n";
 
 type Tab = "unfall" | "fahrzeugA" | "fahrzeugB" | "skizze" | "bilder" | "unterschrift";
 
-const TABS: { key: Tab; label: string }[] = [
-  { key: "unfall", label: "Unfalldaten & Zeugen" },
-  { key: "fahrzeugA", label: "Fahrzeug A" },
-  { key: "fahrzeugB", label: "Fahrzeug B" },
-  { key: "skizze", label: "Skizze" },
-  { key: "bilder", label: "Fotos" },
-  { key: "unterschrift", label: "Unterschrift" },
-];
+const TABS: Tab[] = ["unfall", "fahrzeugA", "fahrzeugB", "skizze", "bilder", "unterschrift"];
+
+function tabLabel(tab: Tab, lang: Sprache): string {
+  switch (tab) {
+    case "unfall": return t("tabUnfall", lang);
+    case "fahrzeugA": return t("tabFahrzeugA", lang);
+    case "fahrzeugB": return t("tabFahrzeugB", lang);
+    case "skizze": return t("tabSkizze", lang);
+    case "bilder": return t("tabFotos", lang);
+    case "unterschrift": return t("tabUnterschrift", lang);
+  }
+}
 
 export default function Home() {
   const [bericht, setBericht] = useState<UnfallBericht>(defaultBericht());
@@ -37,7 +42,7 @@ export default function Home() {
     setGenerating(true);
     try {
       const { generateUnfallberichtPdf } = await import("@/lib/generatePdf");
-      await generateUnfallberichtPdf(bericht);
+      await generateUnfallberichtPdf(bericht, bericht.sprache);
     } catch (err) {
       console.error("PDF-Fehler:", err);
       alert("Fehler beim Erstellen des PDFs. Bitte versuchen Sie es erneut.");
@@ -96,27 +101,36 @@ export default function Home() {
       <header className="bg-blue-800 text-white shadow-lg sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold leading-tight">Europäischer Unfallbericht</h1>
+            <h1 className="text-xl font-bold leading-tight">{t("appTitle", bericht.sprache)}</h1>
             <p className="text-blue-200 text-xs">Constat Amiable d&apos;Accident Automobile</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <select
+              value={bericht.sprache}
+              onChange={(e) => set("sprache", e.target.value as Sprache)}
+              className="px-2 py-2 text-sm rounded-lg bg-blue-700 text-white border border-blue-600 focus:outline-none focus:ring-2 focus:ring-white"
+            >
+              <option value="de">Deutsch</option>
+              <option value="de-en">Deutsch / English</option>
+              <option value="de-fr">Deutsch / Français</option>
+            </select>
             <button
               onClick={handleReset}
               className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
             >
-              Neu
+              {t("btnNeu", bericht.sprache)}
             </button>
             <button
               onClick={handleSave}
               className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
             >
-              Speichern
+              {t("btnSpeichern", bericht.sprache)}
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
             >
-              Laden
+              {t("btnLaden", bericht.sprache)}
             </button>
             <input
               ref={fileInputRef}
@@ -133,10 +147,10 @@ export default function Home() {
               {generating ? (
                 <>
                   <span className="inline-block w-4 h-4 border-2 border-blue-800 border-t-transparent rounded-full animate-spin" />
-                  PDF wird erstellt…
+                  {t("pdfWirdErstellt", bericht.sprache)}
                 </>
               ) : (
-                "PDF erstellen"
+                t("btnPdfErstellen", bericht.sprache)
               )}
             </button>
           </div>
@@ -146,16 +160,16 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 flex gap-1 overflow-x-auto pb-1">
           {TABS.map((tab) => (
             <button
-              key={tab.key}
+              key={tab}
               type="button"
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => setActiveTab(tab)}
               className={`px-3 py-2 text-sm whitespace-nowrap rounded-t-lg transition-colors ${
-                activeTab === tab.key
+                activeTab === tab
                   ? "bg-white text-blue-800 font-semibold"
                   : "text-blue-200 hover:text-white hover:bg-blue-700"
               }`}
             >
-              {tab.label}
+              {tabLabel(tab, bericht.sprache)}
             </button>
           ))}
         </div>
@@ -165,29 +179,29 @@ export default function Home() {
         {/* ── Tab: Unfalldaten & Zeugen ─────────────────────────────────────── */}
         {activeTab === "unfall" && (
           <>
-            <Section title="1. Unfalldaten">
+            <Section title={t("sectionUnfall", bericht.sprache)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InputField
-                  label="Datum des Unfalls"
+                  label={t("labelDatum", bericht.sprache)}
                   value={bericht.unfallDatum}
                   onChange={(v) => set("unfallDatum", v)}
                   type="date"
                 />
                 <InputField
-                  label="Uhrzeit"
+                  label={t("labelUhrzeit", bericht.sprache)}
                   value={bericht.unfallUhrzeit}
                   onChange={(v) => set("unfallUhrzeit", v)}
                   type="time"
                 />
                 <InputField
-                  label="Unfallort (Straße, Ort)"
+                  label={t("labelUnfallort", bericht.sprache)}
                   value={bericht.unfallOrt}
                   onChange={(v) => set("unfallOrt", v)}
                   placeholder="z. B. Hauptstraße 5, München"
                   className="col-span-full sm:col-span-1"
                 />
                 <InputField
-                  label="Land"
+                  label={t("labelLand", bericht.sprache)}
                   value={bericht.unfallLand}
                   onChange={(v) => set("unfallLand", v)}
                   placeholder="z. B. Deutschland"
@@ -195,17 +209,17 @@ export default function Home() {
 
                 <div className="col-span-full flex flex-col gap-2">
                   <CheckboxField
-                    label="Verletzte Personen vorhanden"
+                    label={t("checkVerletzte", bericht.sprache)}
                     checked={bericht.verletzte}
                     onChange={(v) => set("verletzte", v)}
                   />
                   <CheckboxField
-                    label="Sachschaden an anderen Fahrzeugen / Gegenständen"
+                    label={t("checkSachschaden", bericht.sprache)}
                     checked={bericht.sachschadenAnDritten}
                     onChange={(v) => set("sachschadenAnDritten", v)}
                   />
                   <CheckboxField
-                    label="Zeugen vorhanden"
+                    label={t("checkZeugen", bericht.sprache)}
                     checked={bericht.zeugenVorhanden}
                     onChange={(v) => set("zeugenVorhanden", v)}
                   />
@@ -213,41 +227,41 @@ export default function Home() {
               </div>
             </Section>
 
-            <Section title="2. Zeugen (optional)">
+            <Section title={t("sectionZeugen", bericht.sprache)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-3">
-                  <p className="text-sm font-semibold text-gray-700">Zeuge 1</p>
+                  <p className="text-sm font-semibold text-gray-700">{t("zeuge1", bericht.sprache)}</p>
                   <InputField
-                    label="Name"
+                    label={t("labelName", bericht.sprache)}
                     value={bericht.zeuge1Name}
                     onChange={(v) => set("zeuge1Name", v)}
                   />
                   <InputField
-                    label="Adresse"
+                    label={t("labelAdresse", bericht.sprache)}
                     value={bericht.zeuge1Adresse}
                     onChange={(v) => set("zeuge1Adresse", v)}
                   />
                   <InputField
-                    label="Telefon"
+                    label={t("labelTelefon", bericht.sprache)}
                     value={bericht.zeuge1Telefon}
                     onChange={(v) => set("zeuge1Telefon", v)}
                     type="tel"
                   />
                 </div>
                 <div className="flex flex-col gap-3">
-                  <p className="text-sm font-semibold text-gray-700">Zeuge 2</p>
+                  <p className="text-sm font-semibold text-gray-700">{t("zeuge2", bericht.sprache)}</p>
                   <InputField
-                    label="Name"
+                    label={t("labelName", bericht.sprache)}
                     value={bericht.zeuge2Name}
                     onChange={(v) => set("zeuge2Name", v)}
                   />
                   <InputField
-                    label="Adresse"
+                    label={t("labelAdresse", bericht.sprache)}
                     value={bericht.zeuge2Adresse}
                     onChange={(v) => set("zeuge2Adresse", v)}
                   />
                   <InputField
-                    label="Telefon"
+                    label={t("labelTelefon", bericht.sprache)}
                     value={bericht.zeuge2Telefon}
                     onChange={(v) => set("zeuge2Telefon", v)}
                     type="tel"
@@ -263,30 +277,33 @@ export default function Home() {
           <>
             <FahrzeugForm
               label="A"
+              lang={bericht.sprache}
               data={bericht.fahrzeugA}
               onChange={(v) => set("fahrzeugA", v)}
             />
             <VersicherungForm
               label="A"
+              lang={bericht.sprache}
               data={bericht.versicherungA}
               onChange={(v) => set("versicherungA", v)}
             />
             <ManoverForm
               label="A"
+              lang={bericht.sprache}
               data={bericht.manoverA}
               onChange={(v) => set("manoverA", v)}
             />
-            <Section title="Sichtbare Schäden & Bemerkungen – Fahrzeug A">
+            <Section title={t("sectionSchadenA", bericht.sprache)}>
               <div className="flex flex-col gap-4">
                 <TextareaField
-                  label="Sichtbare Schäden Fahrzeug A"
+                  label={t("labelSchadenA", bericht.sprache)}
                   value={bericht.schadenA}
                   onChange={(v) => set("schadenA", v)}
                   placeholder="Beschreiben Sie die sichtbaren Schäden am Fahrzeug A..."
                   rows={3}
                 />
                 <TextareaField
-                  label="Bemerkungen Fahrzeug A"
+                  label={t("labelBemerkungA", bericht.sprache)}
                   value={bericht.bemerkungA}
                   onChange={(v) => set("bemerkungA", v)}
                   placeholder="Weitere Anmerkungen..."
@@ -302,30 +319,33 @@ export default function Home() {
           <>
             <FahrzeugForm
               label="B"
+              lang={bericht.sprache}
               data={bericht.fahrzeugB}
               onChange={(v) => set("fahrzeugB", v)}
             />
             <VersicherungForm
               label="B"
+              lang={bericht.sprache}
               data={bericht.versicherungB}
               onChange={(v) => set("versicherungB", v)}
             />
             <ManoverForm
               label="B"
+              lang={bericht.sprache}
               data={bericht.manoverB}
               onChange={(v) => set("manoverB", v)}
             />
-            <Section title="Sichtbare Schäden & Bemerkungen – Fahrzeug B">
+            <Section title={t("sectionSchadenB", bericht.sprache)}>
               <div className="flex flex-col gap-4">
                 <TextareaField
-                  label="Sichtbare Schäden Fahrzeug B"
+                  label={t("labelSchadenB", bericht.sprache)}
                   value={bericht.schadenB}
                   onChange={(v) => set("schadenB", v)}
                   placeholder="Beschreiben Sie die sichtbaren Schäden am Fahrzeug B..."
                   rows={3}
                 />
                 <TextareaField
-                  label="Bemerkungen Fahrzeug B"
+                  label={t("labelBemerkungB", bericht.sprache)}
                   value={bericht.bemerkungB}
                   onChange={(v) => set("bemerkungB", v)}
                   placeholder="Weitere Anmerkungen..."
@@ -339,6 +359,7 @@ export default function Home() {
         {/* ── Tab: Skizze ───────────────────────────────────────────────────── */}
         {activeTab === "skizze" && (
           <SkizzeCanvas
+            lang={bericht.sprache}
             value={bericht.skizze}
             onChange={(v) => set("skizze", v)}
           />
@@ -347,6 +368,7 @@ export default function Home() {
         {/* ── Tab: Bilder ───────────────────────────────────────────────────── */}
         {activeTab === "bilder" && (
           <BilderUpload
+            lang={bericht.sprache}
             bilder={bericht.bilder}
             onChange={(v) => set("bilder", v)}
           />
@@ -355,6 +377,7 @@ export default function Home() {
         {/* ── Tab: Unterschrift ─────────────────────────────────────────────── */}
         {activeTab === "unterschrift" && (
           <SignatureCanvas
+            lang={bericht.sprache}
             unterschriftA={bericht.unterschriftA}
             unterschriftB={bericht.unterschriftB}
             onChangeA={(v) => set("unterschriftA", v)}
@@ -367,16 +390,16 @@ export default function Home() {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex justify-between items-center shadow-lg z-40">
         <p className="text-sm text-gray-500">
           {bericht.bilder.length > 0 && (
-            <span>{bericht.bilder.length} Foto{bericht.bilder.length !== 1 ? "s" : ""} angehängt</span>
+            <span>{bericht.bilder.length} {t("fotosAngehaengt", bericht.sprache).replace("{s}", bericht.bilder.length !== 1 ? "s" : "")}</span>
           )}
           {bericht.skizze && (
-            <span>{bericht.bilder.length > 0 ? " · " : ""}Skizze vorhanden</span>
+            <span>{bericht.bilder.length > 0 ? " · " : ""}{t("skizzeVorhanden", bericht.sprache)}</span>
           )}
           {(bericht.unterschriftA || bericht.unterschriftB) && (
-            <span>{(bericht.bilder.length > 0 || bericht.skizze) ? " · " : ""}Unterschrift vorhanden</span>
+            <span>{(bericht.bilder.length > 0 || bericht.skizze) ? " · " : ""}{t("unterschriftVorhanden", bericht.sprache)}</span>
           )}
           {!bericht.bilder.length && !bericht.skizze && !bericht.unterschriftA && !bericht.unterschriftB && (
-            <span className="text-gray-400">Alle Felder sind optional</span>
+            <span className="text-gray-400">{t("alleFelderOptional", bericht.sprache)}</span>
           )}
         </p>
         <button
@@ -387,10 +410,10 @@ export default function Home() {
           {generating ? (
             <>
               <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              PDF wird erstellt…
+              {t("pdfWirdErstellt", bericht.sprache)}
             </>
           ) : (
-            "PDF erstellen & herunterladen"
+            t("btnPdfErstellenHerunterladen", bericht.sprache)
           )}
         </button>
       </div>

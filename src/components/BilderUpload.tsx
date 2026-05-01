@@ -3,20 +3,24 @@
 import { useRef } from "react";
 import { Section } from "./FormField";
 import type { UploadedImage } from "@/lib/types";
+import { t, type Sprache } from "@/lib/i18n";
 
 interface Props {
+  lang: Sprache;
   bilder: UploadedImage[];
   onChange: (bilder: UploadedImage[]) => void;
 }
 
-const typeOptions: { value: UploadedImage["type"]; label: string }[] = [
-  { value: "fahrzeugA", label: "Fahrzeug A" },
-  { value: "fahrzeugB", label: "Fahrzeug B" },
-  { value: "unfall", label: "Unfallstelle" },
-  { value: "sonstiges", label: "Sonstiges" },
-];
+function typeOptions(lang: Sprache): { value: UploadedImage["type"]; label: string }[] {
+  return [
+    { value: "fahrzeugA", label: t("fotoTypFahrzeugA", lang) },
+    { value: "fahrzeugB", label: t("fotoTypFahrzeugB", lang) },
+    { value: "unfall", label: t("fotoTypUnfall", lang) },
+    { value: "sonstiges", label: t("fotoTypSonstiges", lang) },
+  ];
+}
 
-export function BilderUpload({ bilder, onChange }: Props) {
+export function BilderUpload({ lang, bilder, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = (files: FileList | null) => {
@@ -56,8 +60,10 @@ export function BilderUpload({ bilder, onChange }: Props) {
     onChange(bilder.filter((b) => b.id !== id));
   };
 
+  const options = typeOptions(lang);
+
   return (
-    <Section title="Fotos anhängen">
+    <Section title={t("sectionFotos", lang)}>
       <div
         className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center cursor-pointer hover:bg-blue-50 transition-colors"
         onClick={() => inputRef.current?.click()}
@@ -69,9 +75,9 @@ export function BilderUpload({ bilder, onChange }: Props) {
       >
         <div className="text-4xl mb-2">📷</div>
         <p className="text-sm text-gray-600">
-          Fotos hier ablegen oder <span className="text-blue-600 font-medium">klicken zum Auswählen</span>
+          {t("fotoDropHint", lang)} <span className="text-blue-600 font-medium">{t("fotoClickHint", lang)}</span>
         </p>
-        <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP – mehrere Dateien möglich</p>
+        <p className="text-xs text-gray-400 mt-1">{t("fotoFormats", lang)}</p>
         <input
           ref={inputRef}
           type="file"
@@ -99,7 +105,7 @@ export function BilderUpload({ bilder, onChange }: Props) {
                   onChange={(e) => updateBild(bild.id, "type", e.target.value)}
                   className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {typeOptions.map((o) => (
+                  {options.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
                     </option>
@@ -109,14 +115,14 @@ export function BilderUpload({ bilder, onChange }: Props) {
                   type="text"
                   value={bild.beschreibung}
                   onChange={(e) => updateBild(bild.id, "beschreibung", e.target.value)}
-                  placeholder="Beschreibung (optional)"
+                  placeholder={t("fotoBeschreibung", lang)}
                   className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={() => removeBild(bild.id)}
                   className="text-red-500 text-xs hover:text-red-700 text-left"
                 >
-                  Entfernen
+                  {t("btnEntfernen", lang)}
                 </button>
               </div>
             </div>

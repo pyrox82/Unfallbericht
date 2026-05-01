@@ -2,43 +2,48 @@
 
 import { CheckboxField, InputField, Section } from "./FormField";
 import type { ManoverCheckboxen } from "@/lib/types";
+import { t, type Sprache } from "@/lib/i18n";
 
 interface Props {
   label: "A" | "B";
+  lang: Sprache;
   data: ManoverCheckboxen;
   onChange: (data: ManoverCheckboxen) => void;
 }
 
-const manoverFelder: { key: keyof Omit<ManoverCheckboxen, "anderesManover">; label: string }[] = [
-  { key: "geparkt", label: "Stand geparkt" },
-  { key: "parkenVerlassen", label: "Verließ Parkplatz / öffnete Tür" },
-  { key: "einparken", label: "Wollte einparken" },
-  { key: "ausGarageAusfahren", label: "Fuhr aus Garage / Privatgelände" },
-  { key: "aufParkplatz", label: "Fuhr auf Parkplatz" },
-  { key: "kreisverkehr", label: "Im Kreisverkehr" },
-  { key: "abbiegenLinks", label: "Bog links ab" },
-  { key: "abbiegenRechts", label: "Bog rechts ab" },
-  { key: "ueberholenVorbeifahren", label: "Überholte / fuhr vorbei" },
-  { key: "spurwechselLinks", label: "Wechselte Spur nach links" },
-  { key: "spurwechselRechts", label: "Wechselte Spur nach rechts" },
-  { key: "rechtsHintenAufgefahren", label: "Fuhr von hinten auf" },
-  { key: "gleicheRichtungVerschiedeneSpuren", label: "Gleiche Richtung, andere Spur" },
-  { key: "gegenfahrbahn", label: "Fuhr auf Gegenfahrbahn" },
-  { key: "rechtsVonRechts", label: "Kam von rechts (Vorfahrt)" },
-  { key: "rueckwaerts", label: "Fuhr rückwärts" },
-  { key: "nichtBeachtenVorfahrt", label: "Missachtete Vorfahrt / Ampel" },
-];
+function manoverFelder(lang: Sprache): { key: keyof Omit<ManoverCheckboxen, "anderesManover">; label: string }[] {
+  return [
+    { key: "geparkt", label: t("manoverGeparkt", lang) },
+    { key: "parkenVerlassen", label: t("manoverParkenVerlassen", lang) },
+    { key: "einparken", label: t("manoverEinparken", lang) },
+    { key: "ausGarageAusfahren", label: t("manoverAusGarage", lang) },
+    { key: "aufParkplatz", label: t("manoverAufParkplatz", lang) },
+    { key: "kreisverkehr", label: t("manoverKreisverkehr", lang) },
+    { key: "abbiegenLinks", label: t("manoverAbbiegenLinks", lang) },
+    { key: "abbiegenRechts", label: t("manoverAbbiegenRechts", lang) },
+    { key: "ueberholenVorbeifahren", label: t("manoverUeberholen", lang) },
+    { key: "spurwechselLinks", label: t("manoverSpurwechselLinks", lang) },
+    { key: "spurwechselRechts", label: t("manoverSpurwechselRechts", lang) },
+    { key: "rechtsHintenAufgefahren", label: t("manoverHintenAufgefahren", lang) },
+    { key: "gleicheRichtungVerschiedeneSpuren", label: t("manoverGleicheRichtung", lang) },
+    { key: "gegenfahrbahn", label: t("manoverGegenfahrbahn", lang) },
+    { key: "rechtsVonRechts", label: t("manoverRechtsVonRechts", lang) },
+    { key: "rueckwaerts", label: t("manoverRueckwaerts", lang) },
+    { key: "nichtBeachtenVorfahrt", label: t("manoverVorfahrt", lang) },
+  ];
+}
 
-export function ManoverForm({ label, data, onChange }: Props) {
+export function ManoverForm({ label, lang, data, onChange }: Props) {
   const set = <K extends keyof ManoverCheckboxen>(key: K, val: ManoverCheckboxen[K]) =>
     onChange({ ...data, [key]: val });
 
-  const anzahl = manoverFelder.filter((f) => data[f.key]).length;
+  const felder = manoverFelder(lang);
+  const anzahl = felder.filter((f) => data[f.key]).length;
 
   return (
-    <Section title={`Manöver / Umstände Fahrzeug ${label} (Anzahl angekreuzt: ${anzahl})`}>
+    <Section title={t("sectionManover", lang, { label, anzahl })}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {manoverFelder.map(({ key, label: lbl }) => (
+        {felder.map(({ key, label: lbl }) => (
           <CheckboxField
             key={key}
             label={lbl}
@@ -49,7 +54,7 @@ export function ManoverForm({ label, data, onChange }: Props) {
       </div>
       <div className="mt-3">
         <InputField
-          label="Sonstiges Manöver (Beschreibung)"
+          label={t("labelSonstigesManover", lang)}
           value={data.anderesManover}
           onChange={(v) => set("anderesManover", v)}
           placeholder="Freie Beschreibung..."

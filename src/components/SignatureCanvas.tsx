@@ -2,8 +2,10 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Section } from "./FormField";
+import { t, type Sprache } from "@/lib/i18n";
 
 interface Props {
+  lang: Sprache;
   unterschriftA: string;
   unterschriftB: string;
   onChangeA: (dataUrl: string) => void;
@@ -11,10 +13,12 @@ interface Props {
 }
 
 function SignaturePad({
+  lang,
   label,
   value,
   onChange,
 }: {
+  lang: Sprache;
   label: string;
   value: string;
   onChange: (dataUrl: string) => void;
@@ -108,7 +112,7 @@ function SignaturePad({
           onClick={clear}
           className="px-3 py-1.5 rounded text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
         >
-          Löschen
+          {t("btnLoeschen", lang)}
         </button>
       </div>
       <canvas
@@ -124,13 +128,14 @@ function SignaturePad({
         onPointerCancel={stopDraw}
       />
       <p className="text-xs text-gray-400">
-        Mit Stift, Finger oder Maus unterschreiben
+        {t("hintUnterschrift", lang)}
       </p>
     </div>
   );
 }
 
 export function SignatureCanvas({
+  lang,
   unterschriftA,
   unterschriftB,
   onChangeA,
@@ -138,15 +143,17 @@ export function SignatureCanvas({
 }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <Section title="Unterschriften">
+      <Section title={t("sectionUnterschriften", lang)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SignaturePad
-            label="Fahrzeug A – Unterschrift"
+            lang={lang}
+            label={t("labelUnterschriftA", lang)}
             value={unterschriftA}
             onChange={onChangeA}
           />
           <SignaturePad
-            label="Fahrzeug B – Unterschrift"
+            lang={lang}
+            label={t("labelUnterschriftB", lang)}
             value={unterschriftB}
             onChange={onChangeB}
           />
