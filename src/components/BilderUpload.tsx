@@ -26,17 +26,23 @@ export function BilderUpload({ bilder, onChange }: Props) {
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        newImages.push({
-          id: `${Date.now()}-${Math.random()}`,
-          name: file.name,
-          dataUrl: e.target?.result as string,
-          type: "unfall",
-          beschreibung: "",
-        });
-        processed++;
-        if (processed === files.length) {
-          onChange([...bilder, ...newImages]);
-        }
+        const img = new Image();
+        img.onload = () => {
+          newImages.push({
+            id: `${Date.now()}-${Math.random()}`,
+            name: file.name,
+            dataUrl: e.target?.result as string,
+            type: "unfall",
+            beschreibung: "",
+            width: img.width,
+            height: img.height,
+          });
+          processed++;
+          if (processed === files.length) {
+            onChange([...bilder, ...newImages]);
+          }
+        };
+        img.src = e.target?.result as string;
       };
       reader.readAsDataURL(file);
     });

@@ -114,6 +114,8 @@ export interface UploadedImage {
   dataUrl: string;
   type: "fahrzeugA" | "fahrzeugB" | "unfall" | "sonstiges";
   beschreibung: string;
+  width: number;
+  height: number;
 }
 
 export const defaultManover = (): ManoverCheckboxen => ({
