@@ -54,7 +54,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-blue-800 text-white shadow-lg sticky top-0 z-50 isolate">
+      <header className="bg-blue-800 text-white shadow-lg sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold leading-tight">Europäischer Unfallbericht</h1>
@@ -89,6 +89,7 @@ export default function Home() {
           {TABS.map((tab) => (
             <button
               key={tab.key}
+              type="button"
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-2 text-sm whitespace-nowrap rounded-t-lg transition-colors ${
                 activeTab === tab.key
@@ -102,7 +103,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6 flex flex-col gap-6 pb-24 relative z-0">
+      <main className="max-w-5xl mx-auto px-4 py-6 flex flex-col gap-6 pb-24">
         {/* ── Tab: Unfalldaten & Zeugen ─────────────────────────────────────── */}
         {activeTab === "unfall" && (
           <>
