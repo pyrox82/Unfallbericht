@@ -95,3 +95,4 @@ export async function GET() {
 |------|---------|
 | Initial | Template created with base setup |
 | 2026-05-01 | Europäischer Unfallbericht app built: multi-tab form, sketch canvas, photo upload, PDF export |
+| 2026-05-01 | PDF text overflow fix: all text rendering now uses splitTextToSize for labels, values, maneuver items, free-text fields, check rows, section titles, and photo captions |
