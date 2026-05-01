@@ -34,18 +34,29 @@ function addSectionTitle(doc: jsPDF, title: string, y: number, pageWidth: number
   return y + 12;
 }
 
-function addField(
+function calculateFieldHeight(
+  doc: jsPDF,
+  label: string,
+  value: string,
+  width: number
+): number {
+  doc.setFontSize(8);
+  const labelLines = doc.splitTextToSize(label, width - 4);
+  const labelH = labelLines.length * 4;
+  const lines = doc.splitTextToSize(value || "—", width - 4);
+  const valueH = Math.max(lines.length * 4.5, 4.5);
+  const totalH = labelH + valueH;
+  return totalH + 6;
+}
+
+function drawField(
   doc: jsPDF,
   label: string,
   value: string,
   x: number,
   y: number,
-  width: number,
-  pageHeight?: number
-): number {
-  if (pageHeight) {
-    y = checkNewPage(doc, y, pageHeight, 30);
-  }
+  width: number
+): void {
   doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(80, 80, 80);
@@ -62,7 +73,24 @@ function addField(
   const totalH = labelH + valueH;
   doc.setDrawColor(200, 200, 200);
   doc.line(x, y + totalH + 3, x + width - 2, y + totalH + 3);
-  return y + totalH + 6;
+}
+
+function addField(
+  doc: jsPDF,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+  width: number,
+  pageHeight?: number
+): number {
+  const height = calculateFieldHeight(doc, label, value, width);
+  if (pageHeight && y + height > pageHeight - 30) {
+    doc.addPage();
+    y = 20;
+  }
+  drawField(doc, label, value, x, y, width);
+  return y + height;
 }
 
 function twoColumns(
@@ -76,21 +104,33 @@ function twoColumns(
   let leftY = startY;
   let rightY = startY;
 
-  fields.forEach(([label, value], i) => {
-    if (i % 2 === 0) {
-      if (pageHeight) {
-        const newLeftY = checkNewPage(doc, leftY, pageHeight, 45);
-        const newRightY = checkNewPage(doc, rightY, pageHeight, 45);
-        if (newLeftY !== leftY || newRightY !== rightY) {
-          leftY = Math.min(newLeftY, newRightY);
-          rightY = leftY;
-        }
-      }
-      leftY = addField(doc, label, value, 14, leftY, colW, pageHeight);
-    } else {
-      rightY = addField(doc, label, value, 14 + colW + 2, rightY, colW, pageHeight);
+  for (let i = 0; i < fields.length; i += 2) {
+    const [leftLabel, leftValue] = fields[i];
+    const rightField = fields[i + 1];
+
+    const leftHeight = calculateFieldHeight(doc, leftLabel, leftValue, colW);
+    const rightHeight = rightField
+      ? calculateFieldHeight(doc, rightField[0], rightField[1], colW)
+      : 0;
+    const neededHeight = Math.max(leftHeight, rightHeight);
+
+    if (
+      pageHeight &&
+      (leftY + neededHeight > pageHeight - 30 || rightY + neededHeight > pageHeight - 30)
+    ) {
+      doc.addPage();
+      leftY = 20;
+      rightY = 20;
     }
-  });
+
+    drawField(doc, leftLabel, leftValue, 14, leftY, colW);
+    leftY += leftHeight;
+
+    if (rightField) {
+      drawField(doc, rightField[0], rightField[1], 14 + colW + 2, rightY, colW);
+      rightY += rightHeight;
+    }
+  }
 
   return Math.max(leftY, rightY);
 }

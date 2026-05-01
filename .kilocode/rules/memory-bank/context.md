@@ -23,7 +23,7 @@ A complete multi-tab accident report form app in German. Users can fill in all a
   - [x] All fields optional, language: German
   - [x] PDF footer overflow fix: increased bottom margin from 40mm to 60mm and moved footer from pageHeight-6 to pageHeight-15 to prevent content overlap
   - [x] PDF image fix: preserve aspect ratio for photos, no longer forcing 4:3 format; now scales images to fit while maintaining original proportions
-  - [x] PDF two-column overflow fix: `twoColumns` and `addField` now accept `pageHeight` and perform page-break checks before drawing each field, preventing content from overlapping with the footer
+  - [x] PDF two-column overflow fix: `twoColumns` processes field pairs together, calculates required height before drawing, and performs a single synchronized page-break when needed, preventing both footer overlap and empty pages
 
 ## Current Structure
 
@@ -100,3 +100,4 @@ export async function GET() {
 | 2026-05-01 | Europäischer Unfallbericht app built: multi-tab form, sketch canvas, photo upload, PDF export |
 | 2026-05-01 | PDF text overflow fix: all text rendering now uses splitTextToSize for labels, values, maneuver items, free-text fields, check rows, section titles, and photo captions |
 | 2026-05-01 | PDF footer overlap fix: `twoColumns` and `addField` now perform inline page-break checks to prevent fields from drawing over the footer area |
+| 2026-05-01 | PDF empty page fix: refactored `twoColumns` to calculate field heights before drawing and perform a single synchronized page-break per pair, preventing duplicate `addPage()` calls that caused blank pages |
