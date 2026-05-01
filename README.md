@@ -10,6 +10,9 @@ Eine moderne Webanwendung zum Erstellen umfassender KFZ-Unfallberichte.
 
 - 📋 **Umfassendes Formular** - Erfasst alle wichtigen Unfalldetails
 - 📸 **Fotoupload** - Laden Sie Schadensfotos direkt in die Anwendung hoch
+- 🎨 **Skizzenfunktion** - Zeichnen Sie einen Unfallskizze direkt im Browser
+- ✍️ **Digitale Unterschriften** - Unterschriften für beide Fahrzeuge
+- 💾 **Speichern & Laden** - Speichern Sie Ihren Fortschritt als JSON-Datei und laden Sie ihn später wieder
 - 📄 **PDF-Generierung** - Automatische Erstellung eines professionellen PDF-Berichts
 - 🎨 **Modernes Design** - Responsive Benutzeroberfläche mit Tailwind CSS
 - ⚡ **Performance** - Built mit Next.js für optimale Geschwindigkeit
@@ -17,7 +20,7 @@ Eine moderne Webanwendung zum Erstellen umfassender KFZ-Unfallberichte.
 
 ## 🔐 Datenschutz & Datenspeicherung
 
-Alle eingegebenen Daten werden lokal im Browser gespeichert und verlassen nicht den Browser. Dies gewährleistet die Privatsphäre und Sicherheit Ihrer Informationen.
+Alle eingegebenen Daten werden ausschließlich lokal im Browser verarbeitet und verlassen nicht Ihr Gerät. Sie können Ihren Fortschritt jederzeit als JSON-Datei speichern und später wieder laden. Dies gewährleistet maximale Privatsphäre und Sicherheit Ihrer Informationen.
 
 ## 🛠️ Technologie-Stack
 
@@ -61,9 +64,16 @@ Alle eingegebenen Daten werden lokal im Browser gespeichert und verlassen nicht 
 
 1. Öffnen Sie die Anwendung im Browser
 2. Füllen Sie das Unfallformular mit allen relevanten Informationen aus
-3. Laden Sie Fotos der Unfallstelle und Schäden hoch
-4. Klicken Sie auf "PDF generieren"
-5. Der Bericht wird automatisch als PDF heruntergeladen
+3. Zeichnen Sie bei Bedarf eine Unfallskizze
+4. Laden Sie Fotos der Unfallstelle und Schäden hoch
+5. Fügen Sie die Unterschriften beider Beteiligter hinzu
+6. Klicken Sie auf "Speichern", um Ihren Fortschritt als Datei zu sichern
+7. Klicken Sie auf "PDF erstellen", um den fertigen Bericht herunterzuladen
+
+### Bericht speichern und laden
+
+- **Speichern**: Klicken Sie auf die "Speichern"-Schaltfläche im Header. Alle eingegebenen Daten (Text, Skizze, Fotos, Unterschriften) werden als JSON-Datei auf Ihrem Gerät gesichert.
+- **Laden**: Klicken Sie auf "Laden" und wählen Sie eine zuvor gespeicherte JSON-Datei aus, um Ihren Bericht wiederherzustellen.
 
 ### Verfügbare Felder
 
@@ -71,9 +81,12 @@ Das Formular erfasst typischerweise:
 - Datum und Uhrzeit des Unfalls
 - Ort und Straße
 - Beteiligte Fahrzeuge und Fahrer
+- Versicherungsdaten
 - Schadensumfang
 - Zeugenaussagen
+- Unfallskizze
 - Fotodokumentation
+- Digitale Unterschriften
 
 ## 📝 Verfügbare Scripts
 
