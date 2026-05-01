@@ -9,8 +9,9 @@ import { VersicherungForm } from "@/components/VersicherungForm";
 import { ManoverForm } from "@/components/ManoverForm";
 import { BilderUpload } from "@/components/BilderUpload";
 import { SkizzeCanvas } from "@/components/SkizzeCanvas";
+import { SignatureCanvas } from "@/components/SignatureCanvas";
 
-type Tab = "unfall" | "fahrzeugA" | "fahrzeugB" | "skizze" | "bilder";
+type Tab = "unfall" | "fahrzeugA" | "fahrzeugB" | "skizze" | "bilder" | "unterschrift";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "unfall", label: "Unfalldaten & Zeugen" },
@@ -18,6 +19,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "fahrzeugB", label: "Fahrzeug B" },
   { key: "skizze", label: "Skizze" },
   { key: "bilder", label: "Fotos" },
+  { key: "unterschrift", label: "Unterschrift" },
 ];
 
 export default function Home() {
@@ -293,6 +295,16 @@ export default function Home() {
             onChange={(v) => set("bilder", v)}
           />
         )}
+
+        {/* ── Tab: Unterschrift ─────────────────────────────────────────────── */}
+        {activeTab === "unterschrift" && (
+          <SignatureCanvas
+            unterschriftA={bericht.unterschriftA}
+            unterschriftB={bericht.unterschriftB}
+            onChangeA={(v) => set("unterschriftA", v)}
+            onChangeB={(v) => set("unterschriftB", v)}
+          />
+        )}
       </main>
 
       {/* Bottom bar */}
@@ -304,7 +316,10 @@ export default function Home() {
           {bericht.skizze && (
             <span>{bericht.bilder.length > 0 ? " · " : ""}Skizze vorhanden</span>
           )}
-          {!bericht.bilder.length && !bericht.skizze && (
+          {(bericht.unterschriftA || bericht.unterschriftB) && (
+            <span>{(bericht.bilder.length > 0 || bericht.skizze) ? " · " : ""}Unterschrift vorhanden</span>
+          )}
+          {!bericht.bilder.length && !bericht.skizze && !bericht.unterschriftA && !bericht.unterschriftB && (
             <span className="text-gray-400">Alle Felder sind optional</span>
           )}
         </p>

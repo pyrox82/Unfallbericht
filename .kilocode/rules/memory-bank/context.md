@@ -15,11 +15,12 @@ A complete multi-tab accident report form app in German. Users can fill in all a
 - [x] Memory bank documentation
 - [x] Recipe system for common features
 - [x] Europäischer Unfallbericht form app
-  - [x] Multi-tab UI: Unfalldaten, Fahrzeug A, Fahrzeug B, Skizze, Fotos
+  - [x] Multi-tab UI: Unfalldaten, Fahrzeug A, Fahrzeug B, Skizze, Fotos, Unterschrift
   - [x] All form fields (date, time, names, addresses, insurance, maneuvers)
   - [x] Freehand canvas sketch with pen/eraser/color tools
   - [x] Photo upload (drag & drop, multiple files, categories)
-  - [x] PDF generation via jspdf (all data + sketch + photos)
+  - [x] Signature canvas for Fahrzeug A & B with stylus/finger/mouse support
+  - [x] PDF generation via jspdf (all data + sketch + photos + signatures)
   - [x] All fields optional, language: German
   - [x] PDF footer overflow fix: increased bottom margin from 40mm to 60mm and moved footer from pageHeight-6 to pageHeight-15 to prevent content overlap
   - [x] PDF image fix: preserve aspect ratio for photos, no longer forcing 4:3 format; now scales images to fit while maintaining original proportions
@@ -37,6 +38,7 @@ A complete multi-tab accident report form app in German. Users can fill in all a
 | `src/components/ManoverForm.tsx` | Accident maneuver checkboxes | ✅ Done |
 | `src/components/SkizzeCanvas.tsx` | Freehand drawing canvas | ✅ Done |
 | `src/components/BilderUpload.tsx` | Photo upload with drag & drop | ✅ Done |
+| `src/components/SignatureCanvas.tsx` | Signature pads for Fahrzeug A & B | ✅ Done |
 | `src/lib/types.ts` | TypeScript interfaces & defaults | ✅ Done |
 | `src/lib/generatePdf.ts` | jspdf-based PDF generation | ✅ Done |
 
@@ -101,3 +103,4 @@ export async function GET() {
 | 2026-05-01 | PDF text overflow fix: all text rendering now uses splitTextToSize for labels, values, maneuver items, free-text fields, check rows, section titles, and photo captions |
 | 2026-05-01 | PDF footer overlap fix: `twoColumns` and `addField` now perform inline page-break checks to prevent fields from drawing over the footer area |
 | 2026-05-01 | PDF empty page fix: refactored `twoColumns` to calculate field heights before drawing and perform a single synchronized page-break per pair, preventing duplicate `addPage()` calls that caused blank pages |
+| 2026-05-01 | Added signature tab: dual canvas signature pads for Fahrzeug A & B with pointer event support (stylus, finger, mouse), signatures embedded in PDF |

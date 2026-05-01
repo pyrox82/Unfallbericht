@@ -106,6 +106,10 @@ export interface UnfallBericht {
 
   // Bilder
   bilder: UploadedImage[];
+
+  // Unterschriften
+  unterschriftA: string;
+  unterschriftB: string;
 }
 
 export interface UploadedImage {
@@ -201,4 +205,6 @@ export const defaultBericht = (): UnfallBericht => ({
   schadenB: "",
   bemerkungB: "",
   bilder: [],
+  unterschriftA: "",
+  unterschriftB: "",
 });

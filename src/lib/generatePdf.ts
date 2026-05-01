@@ -409,8 +409,26 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   doc.text("Fahrzeug B – Unterschrift des Fahrers:", pageWidth / 2 + 4, y);
   y += 4;
   doc.setDrawColor(100, 100, 100);
-  doc.rect(14, y, (pageWidth - 32) / 2, 30);
-  doc.rect(pageWidth / 2 + 4, y, (pageWidth - 32) / 2, 30);
+  const sigW = (pageWidth - 32) / 2;
+  const sigH = 30;
+  doc.rect(14, y, sigW, sigH);
+  doc.rect(pageWidth / 2 + 4, y, sigW, sigH);
+
+  if (bericht.unterschriftA) {
+    try {
+      doc.addImage(bericht.unterschriftA, "PNG", 14, y, sigW, sigH);
+    } catch {
+      // ignore image errors
+    }
+  }
+  if (bericht.unterschriftB) {
+    try {
+      doc.addImage(bericht.unterschriftB, "PNG", pageWidth / 2 + 4, y, sigW, sigH);
+    } catch {
+      // ignore image errors
+    }
+  }
+
   y += 36;
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
