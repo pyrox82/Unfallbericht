@@ -27,7 +27,8 @@ function addSectionTitle(doc: jsPDF, title: string, y: number, pageWidth: number
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
-  doc.text(title, 16, y + 5.5);
+  const titleLines = doc.splitTextToSize(title, pageWidth - 32);
+  doc.text(titleLines, 16, y + 5.5);
   doc.setTextColor(0, 0, 0);
   doc.setFont("helvetica", "normal");
   return y + 12;
@@ -44,17 +45,20 @@ function addField(
   doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(80, 80, 80);
-  doc.text(label, x, y);
+  const labelLines = doc.splitTextToSize(label, width - 4);
+  doc.text(labelLines, x, y);
+  const labelH = labelLines.length * 4;
   doc.setFont("helvetica", "normal");
   doc.setTextColor(0, 0, 0);
 
   const lines = doc.splitTextToSize(value || "—", width - 4);
-  doc.text(lines, x, y + 4.5);
+  doc.text(lines, x, y + labelH + 0.5);
 
-  const lineH = Math.max(lines.length * 4.5, 4.5);
+  const valueH = Math.max(lines.length * 4.5, 4.5);
+  const totalH = labelH + valueH;
   doc.setDrawColor(200, 200, 200);
-  doc.line(x, y + lineH + 5, x + width - 2, y + lineH + 5);
-  return y + lineH + 8;
+  doc.line(x, y + totalH + 3, x + width - 2, y + totalH + 3);
+  return y + totalH + 6;
 }
 
 function twoColumns(
@@ -127,8 +131,10 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   ];
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
+  const checkColW = (pageWidth - 28) / 3;
   checks.forEach((c, i) => {
-    doc.text(c, 14 + i * 62, y);
+    const wrappedCheck = doc.splitTextToSize(c, checkColW - 2);
+    doc.text(wrappedCheck, 14 + i * checkColW, y);
   });
   y += 8;
 
@@ -220,22 +226,30 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     (Object.keys(manoverLabels) as (keyof typeof manoverLabels)[]).forEach((key) => {
       if (mv[key]) {
         const xPos = 14 + col * (colW2 + 2);
+        mvY = checkNewPage(doc, mvY, pageHeight);
+        doc.setFontSize(8);
         doc.setTextColor(30, 64, 175);
         doc.text("✓", xPos, mvY);
         doc.setTextColor(0, 0, 0);
-        doc.text(manoverLabels[key], xPos + 5, mvY);
+        const labelWrapped = doc.splitTextToSize(manoverLabels[key], colW2 - 7);
+        doc.text(labelWrapped, xPos + 5, mvY);
+        const rowH = Math.max(labelWrapped.length * 4.5, 5);
         col++;
         if (col >= 2) {
           col = 0;
-          mvY += 5;
+          mvY += rowH;
           mvY = checkNewPage(doc, mvY, pageHeight);
         }
       }
     });
     if (col > 0) mvY += 5;
     if (mv.anderesManover) {
-      doc.text(`Sonstiges: ${mv.anderesManover}`, 14, mvY);
-      mvY += 5;
+      mvY = checkNewPage(doc, mvY, pageHeight);
+      doc.setFontSize(8);
+      doc.setTextColor(0, 0, 0);
+      const sonstigesLines = doc.splitTextToSize(`Sonstiges: ${mv.anderesManover}`, pageWidth - 28);
+      doc.text(sonstigesLines, 14, mvY);
+      mvY += sonstigesLines.length * 4.5 + 2;
     }
     y = mvY + 2;
 
@@ -283,12 +297,14 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
             : bild.type === "unfall"
             ? "Unfall"
             : "Sonstiges";
-        doc.text(`${typeLabel}${bild.beschreibung ? `: ${bild.beschreibung}` : ""}`, xPos, y + imgH + 4);
+        const caption = `${typeLabel}${bild.beschreibung ? `: ${bild.beschreibung}` : ""}`;
+        const captionLines = doc.splitTextToSize(caption, imgW);
+        doc.text(captionLines, xPos, y + imgH + 4);
         doc.setTextColor(0, 0, 0);
         col++;
         if (col >= 2) {
           col = 0;
-          y += imgH + 10;
+          y += imgH + 4 + Math.max(captionLines.length * 3.5, 3.5) + 4;
         }
       } catch {
         // skip broken images
