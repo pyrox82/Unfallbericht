@@ -25,6 +25,7 @@ A complete multi-tab accident report form app in German. Users can fill in all a
   - [x] PDF footer overflow fix: increased bottom margin from 40mm to 60mm and moved footer from pageHeight-6 to pageHeight-15 to prevent content overlap
   - [x] PDF image fix: preserve aspect ratio for photos, no longer forcing 4:3 format; now scales images to fit while maintaining original proportions
   - [x] PDF two-column overflow fix: `twoColumns` processes field pairs together, calculates required height before drawing, and performs a single synchronized page-break when needed, preventing both footer overlap and empty pages
+  - [x] Save/load JSON: users can save all form data + sketch + photos + signatures to a local `.json` file and reload it later via header buttons
 
 ## Current Structure
 
@@ -104,3 +105,4 @@ export async function GET() {
 | 2026-05-01 | PDF footer overlap fix: `twoColumns` and `addField` now perform inline page-break checks to prevent fields from drawing over the footer area |
 | 2026-05-01 | PDF empty page fix: refactored `twoColumns` to calculate field heights before drawing and perform a single synchronized page-break per pair, preventing duplicate `addPage()` calls that caused blank pages |
 | 2026-05-01 | Added signature tab: dual canvas signature pads for Fahrzeug A & B with pointer event support (stylus, finger, mouse), signatures embedded in PDF |
+| 2026-05-01 | Added save/load JSON feature: header buttons to export/import all form data (including sketch, photos, signatures) as local `.json` file |

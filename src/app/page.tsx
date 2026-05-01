@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { defaultBericht } from "@/lib/types";
 import type { UnfallBericht } from "@/lib/types";
 import { InputField, CheckboxField, TextareaField, Section } from "@/components/FormField";
@@ -53,6 +53,43 @@ export default function Home() {
     }
   };
 
+  const handleSave = () => {
+    const data = JSON.stringify(bericht, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `unfallbericht-${bericht.unfallDatum || new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        // Basic validation
+        if (typeof data !== "object" || data === null) {
+          throw new Error("Ungültige Datei");
+        }
+        setBericht({ ...defaultBericht(), ...data });
+        alert("Daten erfolgreich geladen.");
+      } catch (err) {
+        alert("Fehler beim Laden der Datei. Bitte wählen Sie eine gültige JSON-Datei aus.");
+      } finally {
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -69,6 +106,25 @@ export default function Home() {
             >
               Neu
             </button>
+            <button
+              onClick={handleSave}
+              className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
+            >
+              Speichern
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
+            >
+              Laden
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json,application/json"
+              onChange={handleLoad}
+              className="hidden"
+            />
             <button
               onClick={handleGeneratePdf}
               disabled={generating}
