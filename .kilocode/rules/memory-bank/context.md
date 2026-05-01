@@ -2,9 +2,9 @@
 
 ## Current State
 
-**Template Status**: ✅ Ready for development
+**App Status**: ✅ Europäischer Unfallbericht (European Accident Report) app fully implemented
 
-The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. It's ready for AI-assisted expansion to build any type of application.
+A complete multi-tab accident report form app in German. Users can fill in all accident details and generate a downloadable PDF.
 
 ## Recently Completed
 
@@ -14,23 +14,32 @@ The template is a clean Next.js 16 starter with TypeScript and Tailwind CSS 4. I
 - [x] ESLint configuration
 - [x] Memory bank documentation
 - [x] Recipe system for common features
+- [x] Europäischer Unfallbericht form app
+  - [x] Multi-tab UI: Unfalldaten, Fahrzeug A, Fahrzeug B, Skizze, Fotos
+  - [x] All form fields (date, time, names, addresses, insurance, maneuvers)
+  - [x] Freehand canvas sketch with pen/eraser/color tools
+  - [x] Photo upload (drag & drop, multiple files, categories)
+  - [x] PDF generation via jspdf (all data + sketch + photos)
+  - [x] All fields optional, language: German
 
 ## Current Structure
 
 | File/Directory | Purpose | Status |
 |----------------|---------|--------|
-| `src/app/page.tsx` | Home page | ✅ Ready |
-| `src/app/layout.tsx` | Root layout | ✅ Ready |
-| `src/app/globals.css` | Global styles | ✅ Ready |
-| `.kilocode/` | AI context & recipes | ✅ Ready |
+| `src/app/page.tsx` | Main accident report form (client component, tabbed) | ✅ Done |
+| `src/app/layout.tsx` | Root layout (lang=de) | ✅ Done |
+| `src/components/FormField.tsx` | Reusable form primitives (Input, Textarea, Checkbox, Section) | ✅ Done |
+| `src/components/FahrzeugForm.tsx` | Vehicle + driver data form | ✅ Done |
+| `src/components/VersicherungForm.tsx` | Insurance data form | ✅ Done |
+| `src/components/ManoverForm.tsx` | Accident maneuver checkboxes | ✅ Done |
+| `src/components/SkizzeCanvas.tsx` | Freehand drawing canvas | ✅ Done |
+| `src/components/BilderUpload.tsx` | Photo upload with drag & drop | ✅ Done |
+| `src/lib/types.ts` | TypeScript interfaces & defaults | ✅ Done |
+| `src/lib/generatePdf.ts` | jspdf-based PDF generation | ✅ Done |
 
 ## Current Focus
 
-The template is ready. Next steps depend on user requirements:
-
-1. What type of application to build
-2. What features are needed
-3. Design/branding preferences
+App is complete and deployed.
 
 ## Quick Start Guide
 
@@ -85,3 +94,4 @@ export async function GET() {
 | Date | Changes |
 |------|---------|
 | Initial | Template created with base setup |
+| 2026-05-01 | Europäischer Unfallbericht app built: multi-tab form, sketch canvas, photo upload, PDF export |
