@@ -82,7 +82,7 @@ function twoColumns(
   return Math.max(leftY, rightY);
 }
 
-function checkNewPage(doc: jsPDF, y: number, pageHeight: number, margin = 60): number {
+function checkNewPage(doc: jsPDF, y: number, pageHeight: number, margin = 80): number {
   if (y > pageHeight - margin) {
     doc.addPage();
     return 20;
@@ -370,18 +370,18 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     { align: "center" }
   );
 
-  // ── Footer on every page ────────────────────────────────────────────────────
+// ── Footer on every page ────────────────────────────────────────────────────
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     doc.setFontSize(7);
     doc.setTextColor(150, 150, 150);
-doc.text(
-       `Europäischer Unfallbericht – Seite ${i} von ${totalPages}`,
-       pageWidth / 2,
-       pageHeight - 15,
-       { align: "center" }
-     );
+    doc.text(
+      `Europäischer Unfallbericht – Seite ${i} von ${totalPages}`,
+      pageWidth / 2,
+      pageHeight - 15,
+      { align: "center" }
+    );
   }
 
   doc.save("unfallbericht.pdf");
