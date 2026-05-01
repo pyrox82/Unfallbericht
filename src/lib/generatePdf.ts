@@ -273,45 +273,90 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     }
   }
 
-  // ── Fotos ─────────────────────────────────────────────────────────────────
-  if (bericht.bilder.length > 0) {
-    doc.addPage();
-    y = 14;
-    y = addSectionTitle(doc, "5. Fotos", y, pageWidth);
+   // ── Fotos ─────────────────────────────────────────────────────────────────
+   if (bericht.bilder.length > 0) {
+     doc.addPage();
+     y = 14;
+     y = addSectionTitle(doc, "5. Fotos", y, pageWidth);
 
-    const imgW = (pageWidth - 32) / 2;
-    const imgH = 70;
-    let col = 0;
+     const maxW = (pageWidth - 32) / 2; // max width for image
+     let col = 0;
+     let rowY = y; // current row's starting y
+     let maxHeightInRow = 0; // track max height in current row for layout
 
-    for (const bild of bericht.bilder) {
-      try {
-        const xPos = 14 + col * (imgW + 4);
-        y = checkNewPage(doc, y, pageHeight, imgH + 20);
-        doc.addImage(bild.dataUrl, "JPEG", xPos, y, imgW, imgH);
-        doc.setFontSize(7);
-        doc.setTextColor(80, 80, 80);
-        const typeLabel =
-          bild.type === "fahrzeugA"
-            ? "Fahrzeug A"
-            : bild.type === "fahrzeugB"
-            ? "Fahrzeug B"
-            : bild.type === "unfall"
-            ? "Unfall"
-            : "Sonstiges";
-        const caption = `${typeLabel}${bild.beschreibung ? `: ${bild.beschreibung}` : ""}`;
-        const captionLines = doc.splitTextToSize(caption, imgW);
-        doc.text(captionLines, xPos, y + imgH + 4);
-        doc.setTextColor(0, 0, 0);
-        col++;
-        if (col >= 2) {
-          col = 0;
-          y += imgH + 4 + Math.max(captionLines.length * 3.5, 3.5) + 4;
-        }
-      } catch {
-        // skip broken images
-      }
-    }
-  }
+     for (const bild of bericht.bilder) {
+       try {
+         // Load image to get its dimensions
+         const img = new Image();
+         await new Promise((resolve, reject) => {
+           img.onload = resolve;
+           img.onerror = reject;
+           img.src = bild.dataUrl;
+         });
+         const { width: imgWidth, height: imgHeight } = img;
+
+         // Calculate scale to fit within maxW while preserving aspect ratio
+         // We'll also limit height to a reasonable max (e.g., 80mm) but let's compute based on maxW and a maxH
+         const maxH = 80; // max height for image
+         let scale = Math.min(maxW / imgWidth, maxH / imgHeight);
+         // If scale > 1, we don't want to enlarge too much, cap at 1.5 maybe?
+         if (scale > 1.5) scale = 1.5;
+         const displayWidth = imgWidth * scale;
+         const displayHeight = imgHeight * scale;
+
+         const xPos = 14 + col * (maxW + 4); // column position
+
+         // Check if we need a new page before drawing this image
+         // We need space for image + caption gap + caption text + bottom margin
+         // We'll compute caption lines after we have displayWidth
+         const typeLabel =
+           bild.type === "fahrzeugA"
+             ? "Fahrzeug A"
+             : bild.type === "fahrzeugB"
+             ? "Fahrzeug B"
+             : bild.type === "unfall"
+             ? "Unfall"
+             : "Sonstiges";
+         const caption = `${typeLabel}${bild.beschreibung ? `: ${bild.beschreibung}` : ""}`;
+         const captionLines = doc.splitTextToSize(caption, displayWidth);
+         const captionHeight = Math.max(captionLines.length * 3.5, 3.5);
+         const neededHeight = displayHeight + 4 + captionHeight + 4; // 4px gap above and below caption
+
+         // Check if adding this image would exceed page height
+         y = checkNewPage(doc, rowY, pageHeight, neededHeight);
+
+         // If we moved to a new page, reset rowY and maxHeightInRow
+         if (y !== rowY) {
+           rowY = y;
+           maxHeightInRow = 0;
+         }
+
+         // Draw image
+         doc.addImage(bild.dataUrl, "JPEG", xPos, y, displayWidth, displayHeight);
+
+         // Draw caption below image
+         doc.setFontSize(7);
+         doc.setTextColor(80, 80, 80);
+         doc.text(captionLines, xPos, y + displayHeight + 4);
+         doc.setTextColor(0, 0, 0);
+
+         // Update max height in row for row layout
+         const itemHeight = displayHeight + 4 + captionHeight + 4;
+         if (itemHeight > maxHeightInRow) maxHeightInRow = itemHeight;
+
+         col++;
+         if (col >= 2) {
+           col = 0;
+           // Move to next row
+           rowY += maxHeightInRow;
+           maxHeightInRow = 0;
+           y = rowY;
+         }
+       } catch {
+         // skip broken images
+       }
+     }
+   }
 
   // ── Unterschriften ──────────────────────────────────────────────────────────
   doc.addPage();

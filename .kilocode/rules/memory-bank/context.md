@@ -22,6 +22,7 @@ A complete multi-tab accident report form app in German. Users can fill in all a
   - [x] PDF generation via jspdf (all data + sketch + photos)
   - [x] All fields optional, language: German
   - [x] PDF text overflow fix: increased margin in checkNewPage function to prevent text from overlapping with footer
+  - [x] PDF image fix: preserve aspect ratio for photos, no longer forcing 4:3 format; now scales images to fit while maintaining original proportions
 
 ## Current Structure
 
