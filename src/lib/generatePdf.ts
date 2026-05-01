@@ -40,8 +40,12 @@ function addField(
   value: string,
   x: number,
   y: number,
-  width: number
+  width: number,
+  pageHeight?: number
 ): number {
+  if (pageHeight) {
+    y = checkNewPage(doc, y, pageHeight, 30);
+  }
   doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(80, 80, 80);
@@ -65,7 +69,8 @@ function twoColumns(
   doc: jsPDF,
   fields: [string, string][],
   startY: number,
-  pageWidth: number
+  pageWidth: number,
+  pageHeight?: number
 ): number {
   const colW = (pageWidth - 28) / 2;
   let leftY = startY;
@@ -73,9 +78,17 @@ function twoColumns(
 
   fields.forEach(([label, value], i) => {
     if (i % 2 === 0) {
-      leftY = addField(doc, label, value, 14, leftY, colW);
+      if (pageHeight) {
+        const newLeftY = checkNewPage(doc, leftY, pageHeight, 45);
+        const newRightY = checkNewPage(doc, rightY, pageHeight, 45);
+        if (newLeftY !== leftY || newRightY !== rightY) {
+          leftY = Math.min(newLeftY, newRightY);
+          rightY = leftY;
+        }
+      }
+      leftY = addField(doc, label, value, 14, leftY, colW, pageHeight);
     } else {
-      rightY = addField(doc, label, value, 14 + colW + 2, rightY, colW);
+      rightY = addField(doc, label, value, 14 + colW + 2, rightY, colW, pageHeight);
     }
   });
 
@@ -121,7 +134,8 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
        ["Land", bericht.unfallLand],
      ],
      y,
-     pageWidth
+     pageWidth,
+     pageHeight
    );
    y = checkNewPage(doc, y, pageHeight);
 
@@ -158,7 +172,8 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
         ["Telefon Zeuge 2", bericht.zeuge2Telefon],
       ],
       y,
-      pageWidth
+      pageWidth,
+      pageHeight
     );
   }
 
@@ -196,7 +211,8 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
         ["Eigentümer Telefon", fz.eigentuemerTelefon],
       ],
       y,
-      pageWidth
+      pageWidth,
+      pageHeight
     );
 
     y = checkNewPage(doc, y, pageHeight);
@@ -215,7 +231,8 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
         ["Kasko-Scheinnummer", vs.kaskoScheinnummer],
       ],
       y,
-      pageWidth
+      pageWidth,
+      pageHeight
     );
 
     y = checkNewPage(doc, y, pageHeight);
@@ -255,8 +272,8 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
     y = mvY + 2;
 
     y = checkNewPage(doc, y, pageHeight);
-    y = addField(doc, `Sichtbare Schäden Fahrzeug ${label}`, schaden, 14, y, pageWidth - 28);
-    y = addField(doc, `Bemerkungen Fahrzeug ${label}`, bemerkung, 14, y, pageWidth - 28);
+    y = addField(doc, `Sichtbare Schäden Fahrzeug ${label}`, schaden, 14, y, pageWidth - 28, pageHeight);
+    y = addField(doc, `Bemerkungen Fahrzeug ${label}`, bemerkung, 14, y, pageWidth - 28, pageHeight);
   }
 
   // ── Skizze ──────────────────────────────────────────────────────────────────
