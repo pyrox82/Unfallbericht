@@ -1,2 +1,15 @@
+# README
+
+## Features
+
+- Feature 1
+- Feature 2
+
 ## 🔐 Datenschutz & Datenspeicherung
-All entered data is stored locally in the browser and does not leave the browser. This ensures the privacy and security of your information.
+
+Alle eingegebenen Daten werden lokal im Browser gespeichert und verlassen nicht den Browser. Dies gewährleistet die Privatsphäre und Sicherheit Ihrer Informationen.
+
+## Technology Stack
+
+- Tech 1
+- Tech 2
