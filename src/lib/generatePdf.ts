@@ -82,7 +82,7 @@ function twoColumns(
   return Math.max(leftY, rightY);
 }
 
-function checkNewPage(doc: jsPDF, y: number, pageHeight: number, margin = 20): number {
+function checkNewPage(doc: jsPDF, y: number, pageHeight: number, margin = 40): number {
   if (y > pageHeight - margin) {
     doc.addPage();
     return 20;
@@ -110,33 +110,34 @@ export async function generateUnfallberichtPdf(bericht: UnfallBericht): Promise<
   doc.setTextColor(0, 0, 0);
   y = 28;
 
-  // ── 1. Unfalldaten ──────────────────────────────────────────────────────────
-  y = addSectionTitle(doc, "1. Unfalldaten", y, pageWidth);
-  y = twoColumns(
-    doc,
-    [
-      ["Datum", bericht.unfallDatum],
-      ["Uhrzeit", bericht.unfallUhrzeit],
-      ["Unfallort", bericht.unfallOrt],
-      ["Land", bericht.unfallLand],
-    ],
-    y,
-    pageWidth
-  );
+   // ── 1. Unfalldaten ──────────────────────────────────────────────────────────
+   y = addSectionTitle(doc, "1. Unfalldaten", y, pageWidth);
+   y = twoColumns(
+     doc,
+     [
+       ["Datum", bericht.unfallDatum],
+       ["Uhrzeit", bericht.unfallUhrzeit],
+       ["Unfallort", bericht.unfallOrt],
+       ["Land", bericht.unfallLand],
+     ],
+     y,
+     pageWidth
+   );
+   y = checkNewPage(doc, y, pageHeight);
 
-  const checks = [
-    bericht.verletzte ? "Verletzte: Ja" : "Verletzte: Nein",
-    bericht.sachschadenAnDritten ? "Sachschaden an Dritten: Ja" : "Sachschaden an Dritten: Nein",
-    bericht.zeugenVorhanden ? "Zeugen vorhanden: Ja" : "Zeugen vorhanden: Nein",
-  ];
-  doc.setFontSize(8);
-  doc.setFont("helvetica", "normal");
-  const checkColW = (pageWidth - 28) / 3;
-  checks.forEach((c, i) => {
-    const wrappedCheck = doc.splitTextToSize(c, checkColW - 2);
-    doc.text(wrappedCheck, 14 + i * checkColW, y);
-  });
-  y += 8;
+   const checks = [
+     bericht.verletzte ? "Verletzte: Ja" : "Verletzte: Nein",
+     bericht.sachschadenAnDritten ? "Sachschaden an Dritten: Ja" : "Sachschaden an Dritten: Nein",
+     bericht.zeugenVorhanden ? "Zeugen vorhanden: Ja" : "Zeugen vorhanden: Nein",
+   ];
+   doc.setFontSize(8);
+   doc.setFont("helvetica", "normal");
+   const checkColW = (pageWidth - 28) / 3;
+   checks.forEach((c, i) => {
+     const wrappedCheck = doc.splitTextToSize(c, checkColW - 2);
+     doc.text(wrappedCheck, 14 + i * checkColW, y);
+   });
+   y += 8;
 
   // ── 2. Zeugen ────────────────────────────────────────────────────────────────
   if (
