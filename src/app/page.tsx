@@ -99,16 +99,16 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-blue-800 text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-2 sm:py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h1 className="text-xl font-bold leading-tight">{t("appTitle", bericht.sprache)}</h1>
-            <p className="text-blue-200 text-xs">Constat Amiable d&apos;Accident Automobile</p>
+            <h1 className="text-lg sm:text-xl font-bold leading-tight">{t("appTitle", bericht.sprache)}</h1>
+            <p className="text-blue-200 text-xs hidden sm:block">Constat Amiable d&apos;Accident Automobile</p>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 items-center">
             <select
               value={bericht.sprache}
               onChange={(e) => set("sprache", e.target.value as Sprache)}
-              className="px-2 py-2 text-sm rounded-lg bg-blue-700 text-white border border-blue-600 focus:outline-none focus:ring-2 focus:ring-white"
+              className="px-2 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg bg-blue-700 text-white border border-blue-600 focus:outline-none focus:ring-2 focus:ring-white"
             >
               <option value="de">Deutsch</option>
               <option value="de-en">Deutsch / English</option>
@@ -116,19 +116,19 @@ export default function Home() {
             </select>
             <button
               onClick={handleReset}
-              className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
             >
               {t("btnNeu", bericht.sprache)}
             </button>
             <button
               onClick={handleSave}
-              className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
             >
               {t("btnSpeichern", bericht.sprache)}
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-3 py-2 text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg bg-blue-700 hover:bg-blue-600 transition-colors"
             >
               {t("btnLaden", bericht.sprache)}
             </button>
@@ -142,7 +142,7 @@ export default function Home() {
             <button
               onClick={handleGeneratePdf}
               disabled={generating}
-              className="px-4 py-2 text-sm font-semibold rounded-lg bg-white text-blue-800 hover:bg-blue-50 transition-colors disabled:opacity-60 flex items-center gap-2"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg bg-white text-blue-800 hover:bg-blue-50 transition-colors disabled:opacity-60 flex items-center gap-2"
             >
               {generating ? (
                 <>
