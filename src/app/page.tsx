@@ -387,7 +387,7 @@ export default function Home() {
       </main>
 
       {/* Bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex justify-between items-center shadow-lg z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex items-center shadow-lg z-40">
         <p className="text-sm text-gray-500">
           {bericht.bilder.length > 0 && (
             <span>{bericht.bilder.length} {t("fotosAngehaengt", bericht.sprache).replace("{s}", bericht.bilder.length !== 1 ? "s" : "")}</span>
@@ -402,20 +402,6 @@ export default function Home() {
             <span className="text-gray-400">{t("alleFelderOptional", bericht.sprache)}</span>
           )}
         </p>
-        <button
-          onClick={handleGeneratePdf}
-          disabled={generating}
-          className="px-6 py-2.5 text-sm font-semibold rounded-lg bg-blue-800 text-white hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center gap-2"
-        >
-          {generating ? (
-            <>
-              <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              {t("pdfWirdErstellt", bericht.sprache)}
-            </>
-          ) : (
-            t("btnPdfErstellenHerunterladen", bericht.sprache)
-          )}
-        </button>
       </div>
     </div>
   );
