@@ -179,6 +179,29 @@ export default function Home() {
         {/* ── Tab: Unfalldaten & Zeugen ─────────────────────────────────────── */}
         {activeTab === "unfall" && (
           <>
+            <div className="rounded-xl border border-blue-200 bg-blue-50 overflow-hidden shadow-sm">
+              <div className="bg-blue-800 px-4 py-3">
+                <h2 className="text-white font-semibold text-base">{t("helpTitle", bericht.sprache)}</h2>
+              </div>
+              <div className="p-4 flex flex-col gap-3 text-sm text-gray-700">
+                <p>{t("helpIntro", bericht.sprache)}</p>
+                <div>
+                  <p className="font-semibold text-gray-800 mb-1">{t("helpButtons", bericht.sprache)}</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-1">
+                    <li>{t("helpBtnNeu", bericht.sprache)}</li>
+                    <li>{t("helpBtnSpeichern", bericht.sprache)}</li>
+                    <li>{t("helpBtnLaden", bericht.sprache)}</li>
+                    <li>{t("helpBtnSprache", bericht.sprache)}</li>
+                    <li>{t("helpBtnPdf", bericht.sprache)}</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800 mb-1">{t("helpResult", bericht.sprache)}</p>
+                  <p>{t("helpResultText", bericht.sprache)}</p>
+                </div>
+              </div>
+            </div>
+
             <Section title={t("sectionUnfall", bericht.sprache)}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InputField

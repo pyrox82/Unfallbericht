@@ -156,6 +156,17 @@ const de: Record<string, string> = {
   pdfUnterschriftText1: "Durch Unterzeichnung bestätigen beide Fahrer die Richtigkeit der obigen Angaben.",
   pdfUnterschriftText2: "Dieser Bericht stellt kein Schuldanerkenntnis dar.",
   pdfFooter: "Europäischer Unfallbericht – Seite {i} von {totalPages}",
+
+  helpTitle: "Wie funktioniert diese App?",
+  helpIntro: "Diese App hilft Ihnen dabei, einen Europäischen Unfallbericht digital auszufüllen. Sie können alle Unfalldaten, Fahrzeugdaten, Versicherungsinformationen und Manöver beider Beteiligten erfassen, eine Unfallskizze zeichnen, Fotos anhängen und die Unterschriften beider Fahrer einholen.",
+  helpButtons: "Die Buttons im Kopf",
+  helpBtnNeu: "Neu – Löscht alle Eingaben und beginnt einen neuen Bericht.",
+  helpBtnSpeichern: "Speichern – Exportiert alle Daten als JSON-Datei, die Sie später wieder laden können.",
+  helpBtnLaden: "Laden – Importiert eine zuvor gespeicherte JSON-Datei mit allen Daten.",
+  helpBtnSprache: "Sprachauswahl – Wechselt zwischen Deutsch, Deutsch/Englisch und Deutsch/Französisch.",
+  helpBtnPdf: "PDF erstellen – Erzeugt aus allen eingegebenen Daten ein vollständiges PDF-Dokument zum Ausdrucken oder Weiterleiten.",
+  helpResult: "Was kommt dabei raus?",
+  helpResultText: "Ein professionelles PDF mit allen Unfalldaten, einer Übersicht der Manöver, eingefügten Fotos, der Unfallskizze und den Unterschriften beider Fahrer – bereit für die Versicherung.",
 };
 
 const en: Record<string, string> = {
@@ -314,6 +325,17 @@ const en: Record<string, string> = {
   pdfUnterschriftText1: "By signing, both drivers confirm the accuracy of the above information.",
   pdfUnterschriftText2: "This report does not constitute an admission of liability.",
   pdfFooter: "European Accident Report – Page {i} of {totalPages}",
+
+  helpTitle: "How does this app work?",
+  helpIntro: "This app helps you fill out a European Accident Report digitally. You can record all accident data, vehicle details, insurance information and maneuvers of both parties, draw an accident sketch, attach photos and collect signatures from both drivers.",
+  helpButtons: "The buttons in the header",
+  helpBtnNeu: "New – Clears all entries and starts a new report.",
+  helpBtnSpeichern: "Save – Exports all data as a JSON file that you can load later.",
+  helpBtnLaden: "Load – Imports a previously saved JSON file with all data.",
+  helpBtnSprache: "Language selector – Switches between German, German/English and German/French.",
+  helpBtnPdf: "Create PDF – Generates a complete PDF document from all entered data for printing or forwarding.",
+  helpResult: "What do you get?",
+  helpResultText: "A professional PDF with all accident data, an overview of maneuvers, inserted photos, the accident sketch and signatures from both drivers – ready for the insurance company.",
 };
 
 const fr: Record<string, string> = {
@@ -472,6 +494,17 @@ const fr: Record<string, string> = {
   pdfUnterschriftText1: "Par leur signature, les deux conducteurs confirment l'exactitude des informations ci-dessus.",
   pdfUnterschriftText2: "Ce constat ne constitue pas un aveu de responsabilité.",
   pdfFooter: "Constat Européen d'Accident – Page {i} sur {totalPages}",
+
+  helpTitle: "Comment fonctionne cette application?",
+  helpIntro: "Cette application vous aide à remplir numériquement un Constat Européen d'Accident. Vous pouvez saisir toutes les données de l'accident, les détails des véhicules, les informations d'assurance et les manœuvres des deux parties, dessiner un croquis, joindre des photos et recueillir les signatures des deux conducteurs.",
+  helpButtons: "Les boutons dans l'en-tête",
+  helpBtnNeu: "Nouveau – Efface toutes les entrées et commence un nouveau rapport.",
+  helpBtnSpeichern: "Enregistrer – Exporte toutes les données sous forme de fichier JSON que vous pourrez recharger plus tard.",
+  helpBtnLaden: "Charger – Importe un fichier JSON précédemment enregistré avec toutes les données.",
+  helpBtnSprache: "Sélecteur de langue – Passe entre Allemand, Allemand/Anglais et Allemand/Français.",
+  helpBtnPdf: "Créer PDF – Génère un document PDF complet à partir de toutes les données saisies pour impression ou transmission.",
+  helpResult: "Quel est le résultat?",
+  helpResultText: "Un PDF professionnel avec toutes les données de l'accident, un aperçu des manœuvres, les photos insérées, le croquis de l'accident et les signatures des deux conducteurs – prêt pour l'assurance.",
 };
 
 export function t(key: string, lang: Sprache, replacements?: Record<string, string | number>): string {

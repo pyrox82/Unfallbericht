@@ -27,6 +27,7 @@ A complete multi-tab accident report form app with optional bilingual support. U
   - [x] PDF two-column overflow fix: `twoColumns` processes field pairs together, calculates required height before drawing, and performs a single synchronized page-break when needed, preventing both footer overlap and empty pages
   - [x] Save/load JSON: users can save all form data + sketch + photos + signatures to a local `.json` file and reload it later via header buttons
   - [x] Bilingual form support: language selector in header with three options — German only (default), German/English, German/French. All UI labels, section titles, placeholders, and PDF output are translated accordingly via centralized i18n system (`src/lib/i18n.ts`)
+  - [x] Added help section on first tab explaining app functionality, button usage and PDF output, fully translated
 
 ## Current Structure
 
@@ -109,3 +110,6 @@ export async function GET() {
 | 2026-05-01 | Added signature tab: dual canvas signature pads for Fahrzeug A & B with pointer event support (stylus, finger, mouse), signatures embedded in PDF |
 | 2026-05-01 | Added save/load JSON feature: header buttons to export/import all form data (including sketch, photos, signatures) as local `.json` file |
 | 2026-05-01 | Added bilingual form support: language selector (Deutsch / Deutsch+English / Deutsch+Français), all UI labels and PDF output now support trilingual i18n via `src/lib/i18n.ts` |
+| 2026-05-02 | Added responsive header: buttons wrap on mobile, subtitle hidden, compact padding |
+| 2026-05-02 | Removed duplicate PDF button from bottom bar |
+| 2026-05-02 | Added help box on first tab explaining app purpose, buttons and PDF output in all three languages |
